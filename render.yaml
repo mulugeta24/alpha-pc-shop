@@ -1,0 +1,61 @@
+services:
+  # Customer storefront (React SPA served by Node for client-side routing)
+  - type: web
+    name: alpha-pc-shop
+    runtime: node
+    rootDir: customer-frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: VITE_API_URL
+        value: https://alpha-pc-shop-backend.onrender.com/api
+
+  # Admin panel (React SPA)
+  - type: web
+    name: alpha-pc-shop-admin
+    runtime: static
+    rootDir: admin-frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./admin-frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://alpha-pc-shop-backend.onrender.com/api
+
+  # Backend API
+  - type: web
+    name: alpha-pc-shop-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CUSTOMER_FRONTEND_URL
+        value: https://alpha-pc-shop.onrender.com
+      - key: ADMIN_FRONTEND_URL
+        value: https://alpha-pc-shop-admin.onrender.com
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        value: Alpha PC Shop
